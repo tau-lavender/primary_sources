@@ -5,6 +5,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from time import sleep
 import hashlib
+from src.test import is_data_good, is_codepoint_good, is_isbn10_good
 
 
 def voyager_date(): #https://science.nasa.gov/mission/voyager/voyager-1/
@@ -65,15 +66,20 @@ def kr2_isbn10(): #https://search.catalog.loc.gov/instances/9acb1e70-9ea7-5ec1-9
 parts = []
 
 parts.append(voyager_date())
+print("Is voyager_date good:", is_data_good(parts[-1]))
 parts.append(rfc1149_date())
+print("Is frc1149_date good:", is_data_good(parts[-1]))
 parts.append(brain_codepoint())
+print("Is brain_codepoint good:", is_codepoint_good(parts[-1]))
 parts.append(btc_genesis_date())
+print("Is btc_genesis_date good:", is_data_good(parts[-1]))
 parts.append(kr2_isbn10())
+print("Is kr2_isbn10 good:", is_isbn10_good(parts[-1]))
 
 answer = f"FLAG{{{"-".join(parts)}}}"
 print("Flag:  ", answer)
 h = hashlib.new('sha256')
 h.update(answer.encode('ascii'))
 print("Hash:  ", h.hexdigest())
-print("Is hash == d311f26ea1a995af669a62758ad5e0ce2583331059fbfc5c04cc84b2d41f4aed")
+print("Is hash == d311f26ea1a995af669a62758ad5e0ce2583331059fbfc5c04cc84b2d41f4aed: ", end="")
 print(h.hexdigest() == "d311f26ea1a995af669a62758ad5e0ce2583331059fbfc5c04cc84b2d41f4aed")
