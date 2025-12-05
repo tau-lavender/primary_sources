@@ -1,6 +1,10 @@
 import requests
 from bs4 import BeautifulSoup as bs
 from datetime import datetime
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from time import sleep
+import hashlib
 
 
 def voyager_date(): #https://science.nasa.gov/mission/voyager/voyager-1/
@@ -45,12 +49,31 @@ def btc_genesis_date(): #https://github.com/bitcoin/bitcoin/blob/master/src/kern
 
 def kr2_isbn10(): #https://search.catalog.loc.gov/instances/9acb1e70-9ea7-5ec1-9e9e-4d1e8b6d865e?option=lccn&query=88005934
     url = "https://search.catalog.loc.gov/instances/9acb1e70-9ea7-5ec1-9e9e-4d1e8b6d865e?option=lccn&query=88005934"
-    req = requests.get(url)
-    src = req.text
-    return src
+    cService = webdriver.ChromeService(executable_path="/usr/bin/chromedriver")
+    driver = webdriver.Chrome(service = cService)
+    driver.get(url)
+    sleep(10)
+    elements = driver.find_elements(By.CLASS_NAME, "_metadataDetailsList_10sc3_653")
+    for element in elements:
+        # print(element.text)
+        lis = element.find_elements(By.TAG_NAME, "li")
+        for li in lis:
+            if len(li.text) == 10 and all([lambda x: x.is_digit() for x in li.text]):
+                return li.text
+    return ""
 
-# print(voyager_date())
-# print(rfc1149_date())
-# print(brain_codepoint())
-# print(btc_genesis_date())
-print(kr2_isbn10())
+parts = []
+
+parts.append(voyager_date())
+parts.append(rfc1149_date())
+parts.append(brain_codepoint())
+parts.append(btc_genesis_date())
+parts.append(kr2_isbn10())
+
+answer = f"FLAG{{{"-".join(parts)}}}"
+print("Flag:  ", answer)
+h = hashlib.new('sha256')
+h.update(answer.encode('ascii'))
+print("Hash:  ", h.hexdigest())
+print("Is hash == d311f26ea1a995af669a62758ad5e0ce2583331059fbfc5c04cc84b2d41f4aed")
+print(h.hexdigest() == "d311f26ea1a995af669a62758ad5e0ce2583331059fbfc5c04cc84b2d41f4aed")

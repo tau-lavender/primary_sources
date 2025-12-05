@@ -1,0 +1,11 @@
+[project]
+name = "primary_sources"
+version = "0.1.0"
+description = ""
+requires-python = ">=3.14"
+dependencies = [
+    "pre-commit>=4.4.0",
+    "pytest>=8.4.2",
+    "requests",
+    "bs4"
+]
